@@ -1,6 +1,6 @@
 [package]
 org = "hp"
-name = "database"
+name = "gateway_service"
 version = "0.1.0"
 distribution = "2201.10.0"
 
