@@ -2,7 +2,7 @@ import ballerina/http;
 import ballerina/log;
 import ballerina/uuid;
 import ballerina/observe;
-import ballerina/config;
+import ballerina/configurable;
 
 // Configuration for the observability service
 configurable int observabilityServicePort = 8087;
@@ -50,6 +50,7 @@ map<TraceInfo[]> requestTraces = {};
 // Initialize some dummy data for demonstration
 function initDummyData() {
     // Initialization code remains the same
+    
 }
 
 initDummyData();
@@ -95,8 +96,8 @@ service /observability on new http:Listener(observabilityServicePort) {
     resource function get trace(http:Caller caller, http:Request req, string requestID) returns error? {
         if requestTraces.hasKey(requestID) {
             TraceInfo[] traces = requestTraces[requestID];
-            json responsePayload = { "requestId": requestID, "traces": traces };
-            log:printInfo("Fetched trace for request ID: " + requestID);
+            json responsePayload = { "requestId": requestID, "traces"" +
+           l"og:printInfo("Fetched trace for request ID: " + requestID);
             check caller->respond(responsePayload);
         } else {
             json errorPayload = { "error": "Request ID not found or no trace available." };
