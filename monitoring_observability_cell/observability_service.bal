@@ -188,4 +188,3 @@ service /observability on new http:Listener(8087) {
 
 // Optionally, implement periodic tasks or background workers to simulate real-time monitoring
 // For example, updating metrics periodically or cleaning up old logs/traces
-
