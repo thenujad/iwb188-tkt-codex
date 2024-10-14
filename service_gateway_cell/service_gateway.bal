@@ -9,7 +9,7 @@ configurable int gatewayPort = 8080;
 listener http:Listener gatewayListener = new(gatewayPort);
 
 // Circuit breaker configuration for different microservices
-http:ClientConfig commonConfig = {
+http:ClientConfiguration commonConfig = {
     circuitBreaker: {
         rollingWindow: {
             timeWindow: 10, // 10 seconds time window
@@ -25,14 +25,14 @@ http:ClientConfig commonConfig = {
 };
 
 // HTTP clients for microservices in each cell
-http:Client observabilityServiceClient = new("http://localhost:9095", commonConfig);
-http:Client serviceRegistrationClient = new("http://localhost:9096", commonConfig);
-http:Client taskManagementClient = new("http://localhost:9097", commonConfig);
-http:Client serviceScalingClient = new("http://localhost:9098", commonConfig);
-http:Client faultToleranceClient = new("http://localhost:9099", commonConfig);
-http:Client loadBalancerClient = new("http://localhost:9100", commonConfig);
-http:Client cliServiceClient = new("http://localhost:9101", commonConfig);
-http:Client cellDbServiceClient = new("http://localhost:9102", commonConfig);
+http:Client observabilityServiceClient = check new("http://localhost:9095", commonConfig);
+http:Client serviceRegistrationClient = check  new("http://localhost:9096", commonConfig);
+http:Client taskManagementClient = check new("http://localhost:9097", commonConfig);
+http:Client serviceScalingClient = check  new("http://localhost:9098", commonConfig);
+http:Client faultToleranceClient = check new("http://localhost:9099", commonConfig);
+http:Client loadBalancerClient = check new("http://localhost:9100", commonConfig);
+http:Client cliServiceClient = check new("http://localhost:9101", commonConfig);
+http:Client cellDbServiceClient = check new("http://localhost:9102", commonConfig);
 
 // Enable observability: Configure metrics and tracing
 observe:MetricsConfig metricsConfig = {
