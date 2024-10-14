@@ -1,8 +1,21 @@
 [package]
 org = "hp"
-name = "scaling_service"
+name = "observability"
 version = "0.1.0"
 distribution = "2201.10.0"
 
 [build-options]
 observabilityIncluded = true
+
+[ballerina.observe]
+enabled = true
+metricsEnabled = true
+tracingEnabled = true
+
+[ballerina.observe.prometheus]
+port = 9797
+
+[ballerina.observe.jaeger]
+enabled = true
+reportingHost = "localhost"
+reportingPort = 6831

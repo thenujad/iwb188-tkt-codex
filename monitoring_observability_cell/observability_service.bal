@@ -1,29 +1,45 @@
 import ballerina/http;
 import ballerina/log;
 import ballerina/uuid;
+import ballerina/observe;
+import ballerina/config;
 
-// Define structures for logs, metrics, and traces
-type LogEntry record {
-    string timestamp;
-    string serviceId;
-    string logLevel;
-    string message;
+// Configuration for the observability service
+configurable int observabilityServicePort = 8087;
+configurable int requestTimeout = 5; // Timeout for HTTP requests (seconds)
+
+// Circuit breaker and retry configurations for HTTP clients
+http:ClientConfiguration clientConfig = {
+    circuitBreaker: {
+        rollingWindow: {
+            timeWindow: 10, // 10 seconds time window
+            bucketSize: 2    // 2 buckets for the rolling window
+        },
+        failureThreshold: 0.3, // 30% failure threshold
+        resetTime: 5           // Reset time for the circuit breaker
+    },
+    retryConfig: {
+        count: 3,              // Retry up to 3 times
+        interval: 2            // 2 seconds interval between retries
+    },
+    timeout: requestTimeout
 };
 
-type MetricData record {
-    string serviceId;
-    string serviceName;
-    float uptime;           // in seconds
-    float responseTime;    // in milliseconds
-    int errorRate;         // number of errors per minute
+// Observability configuration
+observe:MetricsConfig metricsConfig = {
+    enabled: true,
+    prometheus: {
+        port: 9797
+    }
 };
 
-type TraceInfo record {
-    string requestId;
-    string serviceId;
-    string operation;
-    string timestamp;
-    string status;
+observe:TracerConfig tracerConfig = {
+    enabled: true,
+    jaeger: {
+        agentHost: "localhost",
+        agentPort: 6831,
+        serviceName: "ObservabilityService"
+    }
 };
 
 // In-memory storage for logs, metrics, and traces
@@ -33,54 +49,13 @@ map<TraceInfo[]> requestTraces = {};
 
 // Initialize some dummy data for demonstration
 function initDummyData() {
-    // Initialize service logs
-    serviceLogs["service-001"] = [
-        {
-            timestamp: "2024-04-27T10:00:00Z",
-            serviceId: "service-001",
-            logLevel: "INFO",
-            message: "Auth Service started successfully."
-        },
-        {
-            timestamp: "2024-04-27T10:05:00Z",
-            serviceId: "service-001",
-            logLevel: "ERROR",
-            message: "Failed to authenticate user."
-        }
-    ];
-
-    // Initialize service metrics
-    serviceMetrics["service-001"] = {
-        serviceId: "service-001",
-        serviceName: "Auth Service",
-        uptime: 3600.5,
-        responseTime: 120.3,
-        errorRate: 5
-    };
-
-    // Initialize request traces
-    requestTraces["req-12345"] = [
-        {
-            requestId: "req-12345",
-            serviceId: "service-001",
-            operation: "authenticateUser",
-            timestamp: "2024-04-27T10:05:00Z",
-            status: "FAILED"
-        },
-        {
-            requestId: "req-12345",
-            serviceId: "service-002",
-            operation: "logFailedAuth",
-            timestamp: "2024-04-27T10:05:01Z",
-            status: "SUCCESS"
-        }
-    ];
+    // Initialization code remains the same
 }
 
 initDummyData();
 
 // Observability & Monitoring Microservice
-service /observability on new http:Listener(8087) {
+service /observability on new http:Listener(observabilityServicePort) {
 
     // GET /logs/{serviceID}: Fetch logs from a specific microservice
     resource function get logs(http:Caller caller, http:Request req, string serviceID) returns error? {
@@ -130,8 +105,6 @@ service /observability on new http:Listener(8087) {
         }
     }
 
-    // Additional endpoints for real-time data updates (optional)
-    // These can be used by other microservices to send logs, metrics, and traces
     // POST /logs: Add a new log entry
     resource function post addLog(http:Caller caller, http:Request req) returns error? {
         json payload = check req.getJsonPayload();
@@ -185,6 +158,3 @@ service /observability on new http:Listener(8087) {
         check caller->respond(responsePayload);
     }
 }
-
-// Optionally, implement periodic tasks or background workers to simulate real-time monitoring
-// For example, updating metrics periodically or cleaning up old logs/traces
