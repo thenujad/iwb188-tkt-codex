@@ -1,0 +1,9 @@
+[project]
+org-name = "wso2"
+version = "0.1.0"
+
+[dependencies]
+ballerina/http = "1.2.0"
+ballerina/log = "1.2.0"
+ballerina/observe = "1.2.0"
+ballerina/config = "1.2.0"
