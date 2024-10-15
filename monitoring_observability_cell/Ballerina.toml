@@ -1,7 +1,8 @@
 [package]
-org = "hp"
-name = "observability"
-version = "0.1.0"
+org = "distributed_microservice_orchestration_platform"
+name = "monitoring_observability_cell"
+version = "1.0.0"
+authors = ["Thenuja_Dulwana"]
 distribution = "2201.10.0"
 
 [build-options]
@@ -19,3 +20,4 @@ port = 9797
 enabled = true
 reportingHost = "localhost"
 reportingPort = 6831
+

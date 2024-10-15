@@ -6,7 +6,7 @@ import ballerina/configurable;
 
 // Configuration for the observability service
 configurable int observabilityServicePort = 8087;
-configurable int requestTimeout = 5; // Timeout for HTTP requests (seconds)
+configurable decimal requestTimeout = 5; // Timeout for HTTP requests (seconds)
 
 // Circuit breaker and retry configurations for HTTP clients
 http:ClientConfiguration clientConfig = {

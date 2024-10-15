@@ -1,6 +1,9 @@
-[project]
-org-name = "wsso2"
-version = "0.1.0"
+[package]
+org = "distributed_microservice_orchestration_platform"
+name = "core_platform_cell"
+version = "1.0.0"
+authors = ["Thenuja_Dulwana"]
+distribution = "2201.10.0"
 
 [build-options]
 observabilityIncluded = true
