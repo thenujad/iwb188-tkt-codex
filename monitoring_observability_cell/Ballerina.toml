@@ -1,5 +1,5 @@
 [package]
-org = "distributed_microservice_orchestration_platform"
+org = "Orchestro"
 name = "monitoring_observability_cell"
 version = "1.0.0"
 authors = ["Thenuja_Dulwana"]

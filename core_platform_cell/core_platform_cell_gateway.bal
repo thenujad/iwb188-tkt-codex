@@ -4,7 +4,7 @@ import ballerina/log;
 configurable int corePlatformPort = 8081;
 listener http:Listener corePlatformListener = new(corePlatformPort);
 
-// HTTP clients for internal microservices
+ //HTTP clients for internal microservices
 http:Client serviceRegistrationClient = check new("http://localhost:8083");
 http:Client taskManagementClient = check new("http://localhost:8082");
 http:Client serviceScalingClient = check new("http://localhost:8084");
