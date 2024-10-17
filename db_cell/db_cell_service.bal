@@ -1,7 +1,7 @@
 import ballerina/sql;
 import ballerina/http;
 import ballerina/log;
-import ballerina/config;
+
 
 configurable string dbUrl = "jdbc:mysql://localhost:3306/distributed_platform";
 configurable string dbUser = "root";
