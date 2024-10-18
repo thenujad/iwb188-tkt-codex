@@ -1,0 +1,6 @@
+host = "localhost"
+user = "root"
+password = "Test123#"
+port = 3305
+database = "reliability_load_management_cell"
+

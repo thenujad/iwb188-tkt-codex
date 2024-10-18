@@ -1,0 +1,6 @@
+[database]
+host = "localhost"
+user = "root"
+password = "password"
+port = 3305
+name = "cell_db"

@@ -1,0 +1,7 @@
+host = "localhost"
+user = "root"
+password = "password"
+port = 3305
+database = "register"
+
+orderEndpoint = "http://localhost:8082/register/"
