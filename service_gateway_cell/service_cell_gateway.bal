@@ -11,37 +11,23 @@ configurable string observabilityServiceURL = ?;
 listener http:Listener serviceGatewayListener = new(serviceGatewayPort);
 
 // HTTP clients for other cell gateways, using configuration values
-http:Client corePlatformGatewayClient = check new(corePlatformServiceURL);
-http:Client reliabilityGatewayClient = check new(reliabilityServiceURL);
-http:Client observabilityGatewayClient = check new(observabilityServiceURL);
+http:Client reliabilityGatewayClient = check new("http://localhost:8085");
+
 
 // Service gateway for routing requests to other services
 service /servicegateway on serviceGatewayListener {
 
-    // Route for core platform services
-    resource function get core(http:Caller caller, http:Request req) returns error? {
-        string path = req.getPath();
-        http:Response|error response = corePlatformGatewayClient->forward("/coreplatform" + path, req);
-        check handleResponse(response, caller);
-    }
-
     // Route for reliability services
-    resource function get reliability(http:Caller caller, http:Request req) returns error? {
+    isolated resource function get reliability(http:Caller caller, http:Request req) returns error? {
         string path = req.getPath();
          http:Response|error response = reliabilityGatewayClient->forward("/reliability" + path, req);
          check handleResponse(response, caller);
     }
 
-    // Route for observability services
-    resource function get observability(http:Caller caller, http:Request req) returns error? {
-        string path = req.getPath();
-        http:Response|error response = observabilityGatewayClient->forward("/observability" + path, req);
-        check handleResponse(response, caller);
-    }
 }
 
 // Utility function to handle the responses from other services
-function handleResponse(http:Response|error response, http:Caller caller) {
+isolated function handleResponse(http:Response|error response, http:Caller caller) {
     if (response is http:Response) {
         var result = caller->respond(response);
         if (result is error) {

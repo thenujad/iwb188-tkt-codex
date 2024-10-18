@@ -1,20 +1,23 @@
 import ballerina/http;
 import ballerina/log;
 
-type Task record {
+type Task record {|
     string taskId;
     string serviceId;
     string taskDescription;
     string status;
-};
+|};
 
 map<Task> tasks = {};
-string[] availableServices = ["service-1", "service-2", "service-3"];
+string[] availableServices = [
+    "service-1", 
+    "service-2", 
+    "service-3"];
 
 service /task on new http:Listener(8082) {
 
     // POST /schedule: Schedule a task to an available service
-    resource function post schedule(http:Caller caller, http:Request req) {
+    isolated resource function post schedule(http:Caller caller, http:Request req) {
         json payload = checkpanic req.getJsonPayload();
         string taskDescription = checkpanic payload.taskDescription.toString();
         string serviceId = assignTaskToMicroservice();
@@ -44,7 +47,7 @@ service /task on new http:Listener(8082) {
     }
 
     // GET /status/{serviceID}: Get tasks for a specific service
-    resource function get status(http:Caller caller, http:Request req, string serviceID) {
+    isolated resource function get status(http:Caller caller, http:Request req, string serviceID) {
         json[] taskList = [];
 
         foreach var [_, task] in tasks.entries() {
@@ -70,7 +73,7 @@ service /task on new http:Listener(8082) {
     }
 }
 
-function assignTaskToMicroservice() returns string {
+isolated function assignTaskToMicroservice() returns string {
     foreach var service in availableServices {
         return service; // Return the first available service for simplicity
     }

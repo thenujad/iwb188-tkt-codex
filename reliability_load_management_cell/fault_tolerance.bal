@@ -18,7 +18,7 @@ map<ServiceStatus> serviceRegistry = {
 service /faultTolerance on new http:Listener(8085) {
 
     // GET /healthcheck/{serviceID}: Perform a health check on a microservice
-    resource function get healthcheck(http:Caller caller, http:Request req, string serviceID) {
+    isolated resource function get healthcheck(http:Caller caller, http:Request req, string serviceID) {
         if (serviceRegistry.hasKey(serviceID)) {
             ServiceStatus service = serviceRegistry[serviceID];
             
@@ -38,7 +38,7 @@ service /faultTolerance on new http:Listener(8085) {
     }
 
     // POST /restart/{serviceID}: Restart a failed microservice
-    resource function post restart(http:Caller caller, http:Request req, string serviceID) {
+    isolated resource function post restart(http:Caller caller, http:Request req, string serviceID) {
         if (serviceRegistry.hasKey(serviceID)) {
             ServiceStatus service = serviceRegistry[serviceID];
             // Logic to restart the service
@@ -60,7 +60,7 @@ service /faultTolerance on new http:Listener(8085) {
     }
 
     // GET /failover/{serviceID}: Redirect traffic to a healthy instance in case of failure
-    resource function get failover(http:Caller caller, http:Request req, string serviceID) {
+    isolated resource function get failover(http:Caller caller, http:Request req, string serviceID) {
         if (serviceRegistry.hasKey(serviceID)) {
             ServiceStatus service = serviceRegistry[serviceID];
             
@@ -93,7 +93,7 @@ service /faultTolerance on new http:Listener(8085) {
 }
 
 // Simulated function to find a healthy instance for failover
-function findHealthyInstance(string failedServiceID) returns string {
+isolated function findHealthyInstance(string failedServiceID) returns string {
     foreach var [serviceID, service] in serviceRegistry.entries() {
         if (serviceID != failedServiceID && service.isHealthy) {
             return service.serviceId;
