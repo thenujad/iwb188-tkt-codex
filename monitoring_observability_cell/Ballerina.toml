@@ -21,3 +21,7 @@ enabled = true
 reportingHost = "localhost"
 reportingPort = 6831
 
+
+[serviceConfigs]
+port = 8080
+logLevel = "INFO"

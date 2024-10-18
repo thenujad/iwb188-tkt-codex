@@ -5,7 +5,7 @@ import ballerina/log;
 type ServiceLoad record {
     string serviceId;
     string serviceName;
-    int activeRequests;  // Number of active requests (load measure)
+    int activeRequests; // Number of active requests (load measure)
 };
 
 // In-memory store for tracking service loads
@@ -16,7 +16,7 @@ map<ServiceLoad> serviceLoadRegistry = {
 };
 
 // Load Balancer Microservice
-listener http:Listener lbListener = new(8086);
+listener http:Listener lbListener = new (8086);
 
 service /loadBalancer on lbListener {
 
@@ -41,15 +41,15 @@ service /loadBalancer on lbListener {
                 log:printInfo("Request routed to " + selectedServiceData.serviceName + " with current load: " + selectedServiceData.activeRequests.toString());
                 // Respond with the routing information
                 checkpanic caller->respond(responsePayload);
-            
+
             } else {
                 // Service data not found in the registry
-                json errorPayload = { "error": "Selected service not found in the registry" };
+                json errorPayload = {"error": "Selected service not found in the registry"};
                 checkpanic caller->respond(errorPayload);
             }
         } else {
             // No available services found
-            json errorPayload = { "error": "No available services to route the request" };
+            json errorPayload = {"error": "No available services to route the request"};
             checkpanic caller->respond(errorPayload);
         }
     }
@@ -70,7 +70,7 @@ service /loadBalancer on lbListener {
             checkpanic caller->respond(responsePayload);
         } else {
             // Service not found in the registry
-            json errorPayload = { "error": "Service not found" };
+            json errorPayload = {"error": "Service not found"};
             checkpanic caller->respond(errorPayload);
         }
     }
@@ -98,17 +98,17 @@ service /loadBalancer on lbListener {
                     checkpanic caller->respond(responsePayload);
                 } else {
                     // The service load is already zero
-                    json errorPayload = { "error": "Service load is already zero" };
+                    json errorPayload = {"error": "Service load is already zero"};
                     checkpanic caller->respond(errorPayload, http:STATUS_BAD_REQUEST);
                 }
             } else {
                 // Service not found in the registry
-                json errorPayload = { "error": "Service not found" };
+                json errorPayload = {"error": "Service not found"};
                 checkpanic caller->respond(errorPayload, http:STATUS_NOT_FOUND);
             }
         } else {
             // Invalid request payload
-            json errorPayload = { "error": "Invalid request payload" };
+            json errorPayload = {"error": "Invalid request payload"};
             checkpanic caller->respond(errorPayload, http:STATUS_BAD_REQUEST);
         }
     }
@@ -117,7 +117,7 @@ service /loadBalancer on lbListener {
 // Function to select the least loaded service based on the current active requests
 isolated function getLeastLoadedService() returns string {
     string leastLoadedService = "";
-    int minLoad = 10000;  // Arbitrary large initial value to compare load
+    int minLoad = 10000; // Arbitrary large initial value to compare load
 
     foreach var [serviceID, service] in serviceLoadRegistry.entries() {
         if (service.activeRequests < minLoad) {
@@ -125,6 +125,4 @@ isolated function getLeastLoadedService() returns string {
             leastLoadedService = serviceID;
         }
     }
-
-    return leastLoadedService;
 }
