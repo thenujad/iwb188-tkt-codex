@@ -1,7 +1,17 @@
-host = "localhost"
-user = "root"
-password = "password"
-port = 3305
-database = "Service"
+[service]
+name = "service_gateway"
+version = "1.0.0"
 
-ServiceGatewayEndpoint = "http://localhost:8082/service/"
+[network]
+port = 8080
+protocol = "http"
+
+[dependencies]
+cli_microservice_cell = "http://localhost:8081"
+core_platform_cell = "http://localhost:8082"
+db_cell = "http://localhost:8083"
+monitoring_observability_cell = "http://localhost:8085"
+reliability_load_management_cell = "http://localhost:8084"
+
+[logging]
+level = "INFO"

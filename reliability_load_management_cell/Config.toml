@@ -1,6 +1,14 @@
-host = "localhost"
-user = "root"
-password = "Test123#"
-port = 3305
-database = "reliability_load_management_cell"
+[service]
+name = "reliability_load_management"
+version = "1.0.0"
 
+[network]
+port = 8084
+protocol = "http"
+
+[dependencies]
+core_platform_cell = "http://localhost:8082"
+monitoring_observability_cell = "http://localhost:8085"
+
+[logging]
+level = "INFO"

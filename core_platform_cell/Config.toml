@@ -1,9 +1,15 @@
-host = "localhost"
-user = "root"
-password = "Test123#"
-port = 3305
-database = ""
+[service]
+name = "core_platform"
+version = "1.0.0"
 
-consumerEndpoint = "http://localhost:8080/consumer/"
-restaurantEndpoint = "http://localhost:8081/restaurant/"
-orderEndpoint = "http://localhost:8082/order/"
+[network]
+port = 8082
+protocol = "http"
+
+[dependencies]
+db_cell = "http://localhost:8083"
+service_gateway_cell = "http://localhost:8080"
+reliability_load_management_cell = "http://localhost:8084"
+
+[logging]
+level = "INFO"

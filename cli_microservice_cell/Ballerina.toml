@@ -3,7 +3,16 @@ org = "Orchestro"
 name = "cli_microservice_cell"
 version = "1.0.0"
 authors = ["Thenuja_Dulwana"]
-distribution = "2201.10.0"
+
+[[dependency]]
+org = "Orchestro"
+name = "core_platform_cell"
+version = "1.0.0"
+
+[[dependency]]
+org = "Orchestro"
+name = "service_gateway_cell"
+version = "1.0.0"
 
 [build-options]
 observabilityIncluded = true

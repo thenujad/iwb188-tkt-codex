@@ -1,7 +1,14 @@
-host = "localhost"
-user = "root"
-password = "password"
-port = 3305
-database = "register"
+[service]
+name = "monitoring_observability"
+version = "1.0.0"
 
-orderEndpoint = "http://localhost:8082/register/"
+[network]
+port = 8085
+protocol = "http"
+
+[dependencies]
+db_cell = "http://localhost:8083"
+reliability_load_management_cell = "http://localhost:8084"
+
+[logging]
+level = "INFO"

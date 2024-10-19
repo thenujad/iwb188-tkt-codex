@@ -1,6 +1,14 @@
-[database]
-host = "localhost"
-user = "root"
-password = "password"
-port = 3305
-name = "cell_db"
+[service]
+name = "db_cell"
+version = "1.0.0"
+
+[network]
+port = 8083
+protocol = "http"
+
+[dependencies]
+core_platform_cell = "http://localhost:8082"
+monitoring_observability_cell = "http://localhost:8085"
+
+[logging]
+level = "INFO"

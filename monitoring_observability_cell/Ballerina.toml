@@ -3,25 +3,16 @@ org = "Orchestro"
 name = "monitoring_observability_cell"
 version = "1.0.0"
 authors = ["Thenuja_Dulwana"]
-distribution = "2201.10.0"
+
+[[dependency]]
+org = "Orchestro"
+name = "db_cell"
+version = "1.0.0"
+
+[[dependency]]
+org = "Orchestro"
+name = "reliability_load_management_cell"
+version = "1.0.0"
 
 [build-options]
 observabilityIncluded = true
-
-[ballerina.observe]
-enabled = true
-metricsEnabled = true
-tracingEnabled = true
-
-[ballerina.observe.prometheus]
-port = 9797
-
-[ballerina.observe.jaeger]
-enabled = true
-reportingHost = "localhost"
-reportingPort = 6831
-
-
-[serviceConfigs]
-port = 8080
-logLevel = "INFO"
