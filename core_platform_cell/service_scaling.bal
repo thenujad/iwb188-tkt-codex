@@ -19,7 +19,7 @@ service /scaling on new http:Listener(8084) {
         string serviceId = checkpanic payload.serviceId.toString();
         string serviceName = checkpanic payload.serviceName.toString();
 
-        log:printInfo("Scaling up service " + serviceName + " (ID: " + serviceId)");
+        log:printInfo("Scaling up service " + serviceName + " (ID: " + serviceId)"); 
 
         json responsePayload = {
             "message": "Service scaled up successfully",

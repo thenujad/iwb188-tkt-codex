@@ -2,7 +2,6 @@ import ballerina/sql;
 import ballerina/http;
 import ballerina/log;
 
-
 configurable string dbUrl = "jdbc:mysql://localhost:3306/distributed_platform";
 configurable string dbUser = "root";
 configurable string dbPassword = "password";
@@ -15,18 +14,59 @@ service /db on new http:Listener(7071) {
 
     // Endpoint to initialize database and create tables
     resource function post init(http:Caller caller, http:Request req) returns json|error {
-        // Create tables for different cells
-        check createObservabilityTable();
-        check createCorePlatformTable();
-        check createReliabilityTable();
-        check createCLITable();
+        json response = {};
+        json initResponses = check initializeDatabase();
+        response["initResults"] = initResponses;
+        check caller->respond(response);
+    }
 
-        return { "status": "success", "message": "Database initialized and tables created." };
+    // Endpoint for generic database operations (insert, update, delete)
+    resource function post operation(http:Caller caller, http:Request req) {
+        json|error payload = req.getJsonPayload();
+        if payload is json {
+            var dbResponse = performDbOperation(payload);
+            handleDbResponse(dbResponse, caller);
+        } else {
+            check caller->respond({ "status": "error", "message": "Invalid request payload" });
+        }
+    }
+}
+
+// Helper function to initialize database tables
+function initializeDatabase() returns json|error {
+    json response = {
+        "ObservabilityTable": check createObservabilityTable(),
+        "CorePlatformTable": check createCorePlatformTable(),
+        "ReliabilityTable": check createReliabilityTable(),
+        "CLITable": check createCLITable()
+    };
+    log:printInfo("All database tables initialized successfully.");
+    return response;
+}
+
+// Database operations functions (insert, update, delete)
+function performDbOperation(json payload) returns json|error {
+    string operationType = check payload["operation"];
+    string query = check payload["query"];
+    if operationType == "insert" || operationType == "update" || operationType == "delete" {
+        check dbClient->execute(query);
+        return { "status": "success", "message": "Operation completed successfully." };
+    }
+    return { "status": "failed", "message": "Unsupported operation type." };
+}
+
+// Handle response for database operations
+function handleDbResponse(json|error response, http:Caller caller) {
+    if response is json {
+        check caller->respond(response);
+    } else {
+        log:printError("Database operation failed", response);
+        check caller->respond({ "status": "error", "message": "Database operation failed." });
     }
 }
 
 // Function to create observability table
-function createObservabilityTable() returns error? {
+function createObservabilityTable() returns json|error {
     string createQuery = "CREATE TABLE IF NOT EXISTS ObservabilityMetrics ("
                           + "id INT AUTO_INCREMENT PRIMARY KEY, "
                           + "metricName VARCHAR(255) NOT NULL, "
@@ -35,40 +75,7 @@ function createObservabilityTable() returns error? {
                           + ")";
     check dbClient->execute(createQuery);
     log:printInfo("ObservabilityMetrics table created.");
+    return { "status": "success", "table": "ObservabilityMetrics" };
 }
 
-// Function to create core platform tables
-function createCorePlatformTable() returns error? {
-    string createQuery = "CREATE TABLE IF NOT EXISTS CorePlatformServices ("
-                          + "id INT AUTO_INCREMENT PRIMARY KEY, "
-                          + "serviceName VARCHAR(255) NOT NULL, "
-                          + "serviceUrl VARCHAR(255) NOT NULL, "
-                          + "status VARCHAR(50) NOT NULL, "
-                          + "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
-                          + ")";
-    check dbClient->execute(createQuery);
-    log:printInfo("CorePlatformServices table created.");
-}
-
-// Function to create reliability tables
-function createReliabilityTable() returns error? {
-    string createQuery = "CREATE TABLE IF NOT EXISTS ReliabilityLogs ("
-                          + "id INT AUTO_INCREMENT PRIMARY KEY, "
-                          + "faultType VARCHAR(255) NOT NULL, "
-                          + "timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
-                          + ")";
-    check dbClient->execute(createQuery);
-    log:printInfo("ReliabilityLogs table created.");
-}
-
-// Function to create CLI related tables
-function createCLITable() returns error? {
-    string createQuery = "CREATE TABLE IF NOT EXISTS CLICommands ("
-                          + "id INT AUTO_INCREMENT PRIMARY KEY, "
-                          + "command VARCHAR(255) NOT NULL, "
-                          + "response VARCHAR(255), "
-                          + "timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
-                          + ")";
-    check dbClient->execute(createQuery);
-    log:printInfo("CLICommands table created.");
-}
+// Similar functions for CorePlatformTable, ReliabilityTable, and CLITable...

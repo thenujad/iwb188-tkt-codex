@@ -12,7 +12,7 @@ type ServiceInfo record {
 map<ServiceInfo> registeredServices = {};
 
 // Service Registration Microservice
-service /service on new http:Listener(8083) {
+service /serviceregistration on new http:Listener(8083) {
 
     // POST /register: Register a new microservice
     resource function post register(http:Caller caller, http:Request req) {
@@ -45,12 +45,12 @@ service /service on new http:Listener(8083) {
     resource function get discover(http:Caller caller, http:Request req) {
         json[] serviceList = [];
 
-        foreach var [_, service] in registeredServices.entries() {
-            if service.status == "active" {
+        foreach var [_, serviceregistration] in registeredServices.entries() {
+            if serviceregistration.status == "active" {
                 json serviceInfo = {
-                    "serviceId": service.serviceId,
-                    "serviceName": service.serviceName,
-                    "serviceURL": service.serviceURL
+                    "serviceId": serviceregistration.serviceId,
+                    "serviceName": serviceregistration.serviceName,
+                    "serviceURL": serviceregistration.serviceURL
                 };
                 serviceList.push(serviceInfo);
             }

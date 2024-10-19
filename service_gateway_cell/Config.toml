@@ -15,3 +15,13 @@ reliability_load_management_cell = "http://localhost:8084"
 
 [logging]
 level = "INFO"
+
+# "serviceGatewayPort" is an optional value
+# serviceGatewayPort = 0	# Type of INTEGER
+
+corePlatformServiceURL = ""	# Type of STRING
+
+reliabilityServiceURL = ""	# Type of STRING
+
+observabilityServiceURL = ""	# Type of STRING
+

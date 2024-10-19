@@ -1,14 +1,15 @@
 [service]
 name = "db_cell"
-version = "1.0.0"
+version = "1.1.0"
 
 [network]
-port = 8083
+port = 7071
 protocol = "http"
 
 [dependencies]
 core_platform_cell = "http://localhost:8082"
 monitoring_observability_cell = "http://localhost:8085"
+reliability_cell = "http://localhost:8086"
 
 [logging]
 level = "INFO"

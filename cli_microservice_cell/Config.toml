@@ -1,8 +1,6 @@
 [service]
 name = "cli_microservice"
 version = "1.0.0"
-
-[network]
 port = 8081
 protocol = "http"
 
@@ -13,3 +11,7 @@ service_gateway_cell = "http://localhost:8080"
 [logging]
 level = "INFO"
 
+[observability]
+enabled = true
+tracing = true
+metrics = true
