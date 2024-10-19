@@ -2,7 +2,7 @@
 org = "Orchestro"
 name = "cli_microservice_cell"
 version = "1.0.0"
-authors = ["Thenuja_Dulwana"]
+authors = ["tkt-codex"]
 
 [[dependency]]
 org = "Orchestro"
