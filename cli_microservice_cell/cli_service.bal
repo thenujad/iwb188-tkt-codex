@@ -5,6 +5,8 @@ import ballerina/uuid;
 
 configurable int servicePort = 8081;
 
+listener http:Listener cliListener = new(servicePort);
+
 // Service registration endpoint
 service /cli on cliListener {
 
