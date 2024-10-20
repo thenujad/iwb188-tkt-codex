@@ -31,20 +31,29 @@ service /scaling on new http:Listener(8084) {
 
     // POST /scale/down: Trigger scaling down
     resource function post scaleDown(http:Caller caller, http:Request req) {
-        json payload = checkpanic req.getJsonPayload();
-        string serviceId = checkpanic payload.serviceId.toString();
-        string serviceName = checkpanic payload.serviceName.toString();
+        json|error payload = req.getJsonPayload();
+        if (payload is json) {
+            json? serviceIdJson = payload["serviceId"];
+            json? serviceNameJson = payload["serviceName"];
+            if (serviceIdJson is string && serviceNameJson is string) {
+                string serviceId = serviceIdJson;
+                string serviceName = serviceNameJson;
 
-        log:printInfo("Scaling down service " + serviceName + " (ID: " + serviceId)");
+                log:printInfo("Scaling down service " + serviceName + " (ID: " + serviceId + ")");
 
-        json responsePayload = {
-            "message": "Service scaled down successfully",
-            "serviceId": serviceId,
-            "serviceName": serviceName
-        };
-        checkpanic caller->respond(responsePayload);
+                json responsePayload = {
+                    "message": "Service scaled down successfully",
+                    "serviceId": serviceId,
+                    "serviceName": serviceName
+                };
+                checkpanic caller->respond(responsePayload);
+            } else {
+                checkpanic caller->respond({ "error": "Invalid JSON payload: missing 'serviceId' or 'serviceName'" });
+            }
+        } else {
+            checkpanic caller->respond({ "error": "Invalid JSON payload" });
+        }
     }
-
     // GET /monitor/usage: Report usage stats
     resource function get monitorUsage(http:Caller caller, http:Request req) {
         json[] usageList = [];

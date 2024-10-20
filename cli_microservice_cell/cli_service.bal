@@ -20,8 +20,6 @@ service /cli on cliListener {
                 string requestID = uuid:createType1AsString();
 
                 log:printInfo("Registering service: " + serviceName + ", RequestID: " + requestID);
-"
-                
                 http:Client orchestrationService = checkpanic new("http://localhost:8080");
                 json requestPayload = {
                     "service_name": serviceName,

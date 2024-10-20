@@ -16,7 +16,7 @@ service /task on new http:Listener(8082) {
 // POST schedule: Schedule a task to an available service
     resource isolated function post schedule(http:Caller caller, http:Request req) {
         json|error payload = req.getJsonPayload();
-        if (payload is json) {
+        if (payload is map<json>) {
             json? taskDescriptionJson = payload.taskDescription;
             if (taskDescriptionJson is string) {
                 string taskDescription = taskDescriptionJson;
