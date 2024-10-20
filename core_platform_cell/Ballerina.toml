@@ -1,23 +1,24 @@
 [package]
 org = "Orchestro"
 name = "core_platform_cell"
-version = "1.0.0"
+version = "0.1.0"
+distribution = "2201.10.2"
 authors = ["tkt-codex"]
 
 [[dependency]]
 org = "Orchestro"
 name = "db_cell"
-version = "1.0.0"
+version = "0.1.0"
 
 [[dependency]]
 org = "Orchestro"
 name = "service_gateway_cell"
-version = "1.0.0"
+version = "0.1.0"
 
 [[dependency]]
 org = "Orchestro"
 name = "reliability_load_management_cell"
-version = "1.0.0"
+version = "0.1.0"
 
 [build-options]
 observabilityIncluded = true
