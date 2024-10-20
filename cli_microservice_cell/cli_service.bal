@@ -21,12 +21,13 @@ service /cli on cliListener {
 
                 log:printInfo("Registering service: " + serviceName + ", RequestID: " + requestID);
 "
+                
                 http:Client orchestrationService = checkpanic new("http://localhost:8080");
                 json requestPayload = {
                     "service_name": serviceName,
                     "url": serviceURL,
                     "request_id": requestID,
-                    "timestamp": time:format(time:currentTime(), "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+                    "timestamp": time:format(time:currentTime(),"yyyy-MM-dd'T'HH:mm:ss.SSSZ")
                 };
 
                 http:Response|http:ClientError response = orchestrationService->post("/registerService", requestPayload);

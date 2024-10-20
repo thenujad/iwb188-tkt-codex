@@ -33,7 +33,7 @@ service /db on new http:Listener(7071) {
 }
 
 // Helper function to initialize database tables
-function initializeDatabase() returns json|error {
+isolated function initializeDatabase() returns json|error {
     json response = {
         "ObservabilityTable": check createObservabilityTable(),
         "CorePlatformTable": check createCorePlatformTable(),
@@ -45,9 +45,9 @@ function initializeDatabase() returns json|error {
 }
 
 // Database operations functions (insert, update, delete)
-function performDbOperation(json payload) returns json|error {
-    string operationType = check payload["operation"];
-    string query = check payload["query"];
+isolated function performDbOperation(json payload) returns json|error {
+    string operationType = check payload.get("operation").toString();
+    string query = check payload.get("query").toString();
     if operationType == "insert" || operationType == "update" || operationType == "delete" {
         check dbClient->execute(query);
         return { "status": "success", "message": "Operation completed successfully." };
@@ -56,7 +56,7 @@ function performDbOperation(json payload) returns json|error {
 }
 
 // Handle response for database operations
-function handleDbResponse(json|error response, http:Caller caller) {
+isolated function handleDbResponse(json|error response, http:Caller caller) {
     if response is json {
         check caller->respond(response);
     } else {
@@ -66,16 +66,16 @@ function handleDbResponse(json|error response, http:Caller caller) {
 }
 
 // Function to create observability table
-function createObservabilityTable() returns json|error {
+isolated function createObservabilityTable() returns json|error {
     string createQuery = "CREATE TABLE IF NOT EXISTS ObservabilityMetrics ("
                           + "id INT AUTO_INCREMENT PRIMARY KEY, "
                           + "metricName VARCHAR(255) NOT NULL, "
                           + "metricValue DOUBLE NOT NULL, "
                           + "timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
                           + ")";
-    check dbClient->execute(createQuery);
-    log:printInfo("ObservabilityMetrics table created.");
-    return { "status": "success", "table": "ObservabilityMetrics" };
+    var result = check dbClient->execute(createQuery);
+    log:printInfo("CLI table created.");
+    return { "status": "success", "table": "CLI" };
 }
 
 // Similar functions for CorePlatformTable, ReliabilityTable, and CLITable...
