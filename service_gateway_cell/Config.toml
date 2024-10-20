@@ -3,7 +3,7 @@ name = "service_gateway"
 version = "1.0.0"
 
 [network]
-port = 8080
+port = 9091
 protocol = "http"
 
 [dependencies]
@@ -16,12 +16,10 @@ reliability_load_management_cell = "http://localhost:8084"
 [logging]
 level = "INFO"
 
-# "serviceGatewayPort" is an optional value
-# serviceGatewayPort = 0	# Type of INTEGER
-
-corePlatformServiceURL = ""	# Type of STRING
-
-reliabilityServiceURL = ""	# Type of STRING
-
-observabilityServiceURL = ""	# Type of STRING
-
+# Configuration for service endpoints
+serviceGatewayPort = 9091
+corePlatformServiceURL = "http://localhost:8082"
+reliabilityServiceURL = "http://localhost:8084"
+observabilityServiceURL = "http://localhost:8085"
+cliMicroserviceURL = "http://localhost:8081"
+dbServiceURL = "http://localhost:8083"

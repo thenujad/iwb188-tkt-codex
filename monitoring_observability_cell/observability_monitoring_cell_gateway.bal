@@ -11,26 +11,32 @@ service /observability on observabilityListener {
         var response = observabilityServiceClient->forward("/metrics", req);
         handleResponse(response, caller);
     }
-    
+
     // Route for logging system information
     resource function post logs(http:Caller caller, http:Request req) {
         var response = observabilityServiceClient->forward("/logs", req);
         handleResponse(response, caller);
     }
-}
 
-// Utility function to handle responses
-function handleResponse(http:Response|error response, http:Caller caller) {
-    if (response is http:Response) {
-        var result = caller->respond(response);
-        if (result is error) {
-            log:printError("Error sending response", result);
-        }
-    } else {
-        log:printError("Error handling the request", response);
-        var errorResult = caller->respond(response.message());
-        if (errorResult is error) {
-            log:printError("Error sending error response", errorResult);
+    // Route for retrieving health status of the system
+    resource function get health(http:Caller caller, http:Request req) {
+        var response = observabilityServiceClient->forward("/health", req);
+        handleResponse(response, caller);
+    }
+
+    // Utility function to handle responses
+    function handleResponse(http:Response|error response, http:Caller caller) {
+        if (response is http:Response) {
+            var result = caller->respond(response);
+            if (result is error) {
+                log:printError("Error sending response", result);
+            }
+        } else {
+            log:printError("Error handling the request", response);
+            var errorResult = caller->respond(response.message());
+            if (errorResult is error) {
+                log:printError("Error sending error response", errorResult);
+            }
         }
     }
 }

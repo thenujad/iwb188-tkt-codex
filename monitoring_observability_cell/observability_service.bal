@@ -7,6 +7,9 @@ listener http:Listener reliabilityListener = new(reliabilityPort);
 // HTTP clients for internal services
 http:Client faultToleranceClient = check new("http://localhost:8085");
 http:Client loadBalancerClient = check new("http://localhost:8086");
+http:Client dbClient = check new("http://localhost:8083");
+
+// Service to handle monitoring and reliability functionalities
 service /reliability on reliabilityListener {
 
     // Fault tolerance management endpoint
@@ -22,6 +25,44 @@ service /reliability on reliabilityListener {
         handleResponse(response, caller);
     }
 
+    // Endpoint to get health metrics from the DB cell
+    resource function get health(http:Caller caller, http:Request req) {
+        var dbResponse = dbClient->get("/db/health");
+        handleResponse(dbResponse, caller);
+    }
+
+    // Endpoint to retrieve system metrics for observability
+    resource function get metrics(http:Caller caller, http:Request req) {
+        // Example implementation for aggregating metrics
+        json metricsData = {
+            "cpuUsage": getCPUUsage(),
+            "memoryUsage": getMemoryUsage(),
+            "dbStatus": getDBStatus()
+        };
+        var result = caller->respond(metricsData);
+        if (result is error) {
+            log:printError("Error responding with metrics", result);
+        }
+    }
+
+    // Endpoint to log system information
+    resource function post logs(http:Caller caller, http:Request req) {
+        json|error logEntry = req.getJsonPayload();
+        if (logEntry is json) {
+            log:printInfo("Received log entry: " + logEntry.toJsonString());
+            var result = caller->respond({ "status": "success" });
+            if (result is error) {
+                log:printError("Error sending response", result);
+            }
+        } else {
+            log:printError("Invalid log entry");
+            var result = caller->respond({ "status": "failure", "message": "Invalid log entry" });
+            if (result is error) {
+                log:printError("Error sending response", result);
+            }
+        }
+    }
+
     isolated function handleResponse(http:Response|http:ClientError response, http:Caller caller) {
         if (response is http:Response) {
             // If the response is successful, forward it to the client
@@ -34,36 +75,19 @@ service /reliability on reliabilityListener {
             checkpanic caller->respond(failureResponse);
         }
     }
+
+    function getCPUUsage() returns float {
+        // Placeholder function to retrieve CPU usage
+        return 23.5;
+    }
+
+    function getMemoryUsage() returns float {
+        // Placeholder function to retrieve memory usage
+        return 45.8;
+    }
+
+    function getDBStatus() returns string {
+        // Placeholder function to check DB health
+        return "Healthy";
+    }
 }
-http:FailoverClient httpEp = check new ();
-http:FailoverClient httpEp1 = check new ();
-http:FailoverClient httpEp2 = check new ();
-http:FailoverClient httpEp3 = check new ();
-http:FailoverClient httpEp4 = check new ();
-http:FailoverClient httpEp5 = check new ();
-http:FailoverClient httpEp6 = check new ();
-http:FailoverClient httpEp7 = check new ();
-http:FailoverClient httpEp8 = check new ();
-http:FailoverClient httpEp9 = check new ();
-http:FailoverClient httpEp10 = check new ();
-http:FailoverClient httpEp11 = check new ();
-http:FailoverClient httpEp12 = check new ();
-http:FailoverClient httpEp13 = check new ();
-http:FailoverClient httpEp14 = check new ();
-http:FailoverClient httpEp15 = check new ();
-http:FailoverClient httpEp16 = check new ();
-http:FailoverClient httpEp17 = check new ();
-http:FailoverClient httpEp18 = check new ();
-http:FailoverClient httpEp19 = check new ();
-http:FailoverClient httpEp20 = check new ();
-http:FailoverClient httpEp21 = check new ();
-http:FailoverClient httpEp22 = check new ();
-http:FailoverClient httpEp23 = check new ();
-http:FailoverClient httpEp24 = check new ();
-http:FailoverClient httpEp25 = check new ();
-http:FailoverClient httpEp26 = check new ();
-http:FailoverClient httpEp27 = check new ();
-http:FailoverClient httpEp28 = check new ();
-http:FailoverClient httpEp29 = check new ();
-http:FailoverClient httpEp30 = check new ();
-http:FailoverClient httpEp31 = check new ();
