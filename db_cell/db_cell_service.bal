@@ -78,4 +78,41 @@ isolated function createObservabilityTable() returns json|error {
     return { "status": "success", "table": "CLI" };
 }
 
-// Similar functions for CorePlatformTable, ReliabilityTable, and CLITable...
+// Function to create CorePlatformTable
+isolated function createCorePlatformTable() returns json|error {
+    string createQuery = "CREATE TABLE IF NOT EXISTS CorePlatform (" 
+                          + "id INT AUTO_INCREMENT PRIMARY KEY, "
+                          + "componentName VARCHAR(255) NOT NULL, "
+                          + "status VARCHAR(50) NOT NULL, "
+                          + "lastChecked TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
+                          + ")";
+    var result = check dbClient->execute(createQuery);
+    log:printInfo("Core Platform table created.");
+    return { "status": "success", "table": "CorePlatform" };
+}
+
+// Function to create ReliabilityTable
+isolated function createReliabilityTable() returns json|error {
+    string createQuery = "CREATE TABLE IF NOT EXISTS ReliabilityMetrics ("
+                          + "id INT AUTO_INCREMENT PRIMARY KEY, "
+                          + "serviceName VARCHAR(255) NOT NULL, "
+                          + "uptimePercentage DOUBLE NOT NULL, "
+                          + "lastDowntime TIMESTAMP"
+                          + ")";
+    var result = check dbClient->execute(createQuery);
+    log:printInfo("Reliability Metrics table created.");
+    return { "status": "success", "table": "ReliabilityMetrics" };
+}
+
+// Function to create CLITable
+isolated function createCLITable() returns json|error {
+    string createQuery = "CREATE TABLE IF NOT EXISTS CLICommands ("
+                          + "id INT AUTO_INCREMENT PRIMARY KEY, "
+                          + "command VARCHAR(255) NOT NULL, "
+                          + "description TEXT, "
+                          + "executionCount INT DEFAULT 0"
+                          + ")";
+    var result = check dbClient->execute(createQuery);
+    log:printInfo("CLI Commands table created.");
+    return { "status": "success", "table": "CLICommands" };
+}
